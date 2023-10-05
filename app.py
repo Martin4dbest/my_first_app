@@ -1,11 +1,25 @@
+
 from flask import Flask
-from models import db, User
+from flask_sqlalchemy import SQLAlchemy
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'd5ddffb27ee8f32e596e1d618eeb4bb4'
+db = SQLAlchemy(app)
 
-# Initialize the database
-db.init_app(app)
+# Define your User model (replace this with your actual User model)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+
+# Initialize Flask-Admin
+admin = Admin(app, name='My App Admin', template_mode='bootstrap3')
+
+# Add your User model to Flask-Admin
+admin.add_view(ModelView(User, db.session))
 
 @app.route('/')
 def index():
